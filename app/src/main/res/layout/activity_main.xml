@@ -1,21 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/clock_bg"
+    android:padding="12dp">
 
-    <Button
-        android:id="@+id/btnTop"
-        android:layout_width="match_parent"
+    <!-- Top Player Clock (Player 1 / Black - Rotated 180° for opponent) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardTop"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:rotation="180"
-        android:textSize="40sp" />
+        app:cardBackgroundColor="@color/card_inactive_bg"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/centerControlBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/card_inactive_stroke"
+        app:strokeWidth="2dp">
 
-    <Button
-        android:id="@+id/btnBottom"
-        android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp">
+
+            <!-- Player Title -->
+            <TextView
+                android:id="@+id/tvPlayerTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.1"
+                android:text="@string/player_black"
+                android:textColor="@color/text_inactive_secondary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Move Counter Badge -->
+            <TextView
+                android:id="@+id/tvMovesTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge"
+                android:letterSpacing="0.05"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp"
+                android:text="@string/initial_moves"
+                android:textColor="@color/badge_text"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Massive Digital Clock Time -->
+            <TextView
+                android:id="@+id/tvTimeTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:text="@string/initial_time"
+                android:textColor="@color/text_inactive_primary"
+                android:textSize="64sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Status Indicator -->
+            <TextView
+                android:id="@+id/tvStatusTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.15"
+                android:text="@string/status_waiting"
+                android:textColor="@color/text_inactive_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Increment Info -->
+            <TextView
+                android:id="@+id/tvIncrementTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/initial_increment"
+                android:textColor="@color/text_inactive_secondary"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Center Control Bar -->
+    <LinearLayout
+        android:id="@+id/centerControlBar"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginVertical="4dp"
+        android:background="@drawable/bg_control_bar"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardTop">
+
+        <!-- Reset Button -->
+        <ImageButton
+            android:id="@+id/btnReset"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/desc_reset"
+            android:padding="12dp"
+            android:src="@drawable/ic_restart"
+            app:tint="@color/control_icon" />
+
+        <!-- Time Preset Pill Button (Subtle, Muted) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTimePreset"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="10dp"
+            android:text="@string/default_preset_short"
+            android:textColor="@color/preset_btn_text"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/preset_btn_bg"
+            app:cornerRadius="20dp"
+            app:icon="@drawable/ic_timer"
+            app:iconPadding="6dp"
+            app:iconSize="16dp"
+            app:iconTint="@color/preset_btn_text"
+            app:rippleColor="@color/preset_btn_ripple"
+            app:strokeColor="@color/preset_btn_stroke"
+            app:strokeWidth="1dp" />
+
+        <!-- Play / Pause Button -->
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/desc_play_pause"
+            android:padding="11dp"
+            android:src="@drawable/ic_pause"
+            app:tint="@color/control_icon_accent" />
+
+        <!-- Sound / Mute Button -->
+        <ImageButton
+            android:id="@+id/btnSound"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/desc_sound"
+            android:padding="12dp"
+            android:src="@drawable/ic_volume_up"
+            app:tint="@color/control_icon" />
+
+    </LinearLayout>
+
+    <!-- Bottom Player Clock (Player 2 / White) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardBottom"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textSize="40sp" />
-</LinearLayout>
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/card_inactive_bg"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/centerControlBar"
+        app:strokeColor="@color/card_inactive_stroke"
+        app:strokeWidth="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp">
+
+            <!-- Player Title -->
+            <TextView
+                android:id="@+id/tvPlayerBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.1"
+                android:text="@string/player_white"
+                android:textColor="@color/text_inactive_secondary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Move Counter Badge -->
+            <TextView
+                android:id="@+id/tvMovesBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_badge"
+                android:letterSpacing="0.05"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp"
+                android:text="@string/initial_moves"
+                android:textColor="@color/badge_text"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Massive Digital Clock Time -->
+            <TextView
+                android:id="@+id/tvTimeBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:fontFeatureSettings="tnum"
+                android:includeFontPadding="false"
+                android:text="@string/initial_time"
+                android:textColor="@color/text_inactive_primary"
+                android:textSize="64sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Status Indicator -->
+            <TextView
+                android:id="@+id/tvStatusBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.15"
+                android:text="@string/status_tap_to_start"
+                android:textColor="@color/text_inactive_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Increment Info -->
+            <TextView
+                android:id="@+id/tvIncrementBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/initial_increment"
+                android:textColor="@color/text_inactive_secondary"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

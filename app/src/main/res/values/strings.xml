@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Chess Clock</string>
+    <string name="player_black">BLACK</string>
+    <string name="player_white">WHITE</string>
+    <string name="initial_moves">0 MOVES</string>
+    <string name="initial_time">03:00</string>
+    <string name="status_waiting">WAITING</string>
+    <string name="status_active">YOUR TURN</string>
+    <string name="status_tap_to_start">TAP TO START</string>
+    <string name="status_paused">PAUSED</string>
+    <string name="status_flagged">TIME UP</string>
+    <string name="initial_increment">+0s</string>
+    <string name="default_preset_short">3 | 0</string>
+    <string name="desc_reset">Reset Game</string>
+    <string name="desc_play_pause">Play / Pause</string>
+    <string name="desc_sound">Sound Toggle</string>
+    <string name="time_preset_dialog_title">Select Time Control</string>
+    <string name="dialog_reset_title">Reset Clock?</string>
+    <string name="dialog_reset_message">Are you sure you want to restart the match?</string>
+    <string name="btn_reset">Reset</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="moves_format">%1$d %2$s</string>
+    <string name="move_singular">MOVE</string>
+    <string name="move_plural">MOVES</string>
 </resources>

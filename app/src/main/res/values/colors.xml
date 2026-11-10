@@ -2,4 +2,40 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Professional Modern Chess Clock Palette -->
+    <color name="clock_bg">#0B0E14</color>
+
+    <!-- Player Card - Waiting / Inactive -->
+    <color name="card_inactive_bg">#151B26</color>
+    <color name="card_inactive_stroke">#232D3F</color>
+    <color name="text_inactive_primary">#94A3B8</color>
+    <color name="text_inactive_secondary">#64748B</color>
+
+    <!-- Player Card - Active / Running -->
+    <color name="card_active_bg">#0F2D24</color>
+    <color name="card_active_stroke">#10B981</color>
+    <color name="text_active_primary">#FFFFFF</color>
+    <color name="text_active_accent">#34D399</color>
+    <color name="text_active_secondary">#6EE7B7</color>
+
+    <!-- Player Card - Flagged / Time's Up -->
+    <color name="card_flagged_bg">#3B0D11</color>
+    <color name="card_flagged_stroke">#EF4444</color>
+    <color name="text_flagged_primary">#FCA5A5</color>
+    <color name="text_flagged_accent">#EF4444</color>
+
+    <!-- Center Control Bar -->
+    <color name="control_bar_bg">#18202F</color>
+    <color name="control_bar_stroke">#2A364B</color>
+    <color name="control_icon">#CBD5E1</color>
+    <color name="control_icon_accent">#10B981</color>
+    <color name="badge_bg">#232D3F</color>
+    <color name="badge_text">#94A3B8</color>
+
+    <!-- Time Preset Button (Muted, Not Too Bright) -->
+    <color name="preset_btn_bg">#232D3F</color>
+    <color name="preset_btn_stroke">#334155</color>
+    <color name="preset_btn_text">#CBD5E1</color>
+    <color name="preset_btn_ripple">#2294A3B8</color>
 </resources>
