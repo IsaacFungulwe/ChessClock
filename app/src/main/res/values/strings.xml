@@ -14,6 +14,7 @@
     <string name="desc_reset">Reset Game</string>
     <string name="desc_play_pause">Play / Pause</string>
     <string name="desc_sound">Sound Toggle</string>
+    <string name="desc_theme_toggle">Toggle Light / Dark Mode</string>
     <string name="time_preset_dialog_title">Select Time Control</string>
     <string name="dialog_reset_title">Reset Clock?</string>
     <string name="dialog_reset_message">Are you sure you want to restart the match?</string>

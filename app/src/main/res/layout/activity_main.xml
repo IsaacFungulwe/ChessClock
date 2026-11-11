@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/clock_bg"
@@ -115,7 +116,7 @@
         android:background="@drawable/bg_control_bar"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingHorizontal="12dp"
+        android:paddingHorizontal="8dp"
         app:layout_constraintBottom_toTopOf="@+id/cardBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -124,21 +125,32 @@
         <!-- Reset Button -->
         <ImageButton
             android:id="@+id/btnReset"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/desc_reset"
-            android:padding="12dp"
+            android:padding="10dp"
             android:src="@drawable/ic_restart"
             app:tint="@color/control_icon" />
 
-        <!-- Time Preset Pill Button (Subtle, Muted) -->
+        <!-- Theme Toggle Button (Light Mode / Dark Mode) -->
+        <ImageButton
+            android:id="@+id/btnTheme"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/desc_theme_toggle"
+            android:padding="10dp"
+            android:src="@drawable/ic_light_mode"
+            app:tint="@color/control_icon" />
+
+        <!-- Time Preset Pill Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTimePreset"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginHorizontal="6dp"
             android:text="@string/default_preset_short"
             android:textColor="@color/preset_btn_text"
             android:textSize="13sp"
@@ -156,22 +168,22 @@
         <!-- Play / Pause Button -->
         <ImageButton
             android:id="@+id/btnPlayPause"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/desc_play_pause"
-            android:padding="11dp"
+            android:padding="9dp"
             android:src="@drawable/ic_pause"
             app:tint="@color/control_icon_accent" />
 
         <!-- Sound / Mute Button -->
         <ImageButton
             android:id="@+id/btnSound"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/desc_sound"
-            android:padding="12dp"
+            android:padding="10dp"
             android:src="@drawable/ic_volume_up"
             app:tint="@color/control_icon" />
 

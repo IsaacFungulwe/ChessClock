@@ -1,5 +1,8 @@
 package com.example.chessclock;
 
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Bundle;
@@ -10,10 +13,13 @@ import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -22,6 +28,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String PREFS_NAME = "chess_clock_prefs";
+    private static final String KEY_LIGHT_MODE = "key_light_mode";
 
     private static class TimeControl {
         final String label;
@@ -57,11 +66,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean isPaused = false;
     private long lastTimestamp;
     private boolean soundEnabled = true;
+    private boolean isLightMode = false;
 
     private ToneGenerator toneGenerator;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     // Views
+    private View rootLayout;
+    private LinearLayout centerControlBar;
     private final MaterialCardView[] cards = new MaterialCardView[2];
     private final TextView[] tvTimes = new TextView[2];
     private final TextView[] tvMoves = new TextView[2];
@@ -69,11 +81,15 @@ public class MainActivity extends AppCompatActivity {
     private final TextView[] tvStatuses = new TextView[2];
     private final TextView[] tvIncrements = new TextView[2];
 
+    private ImageButton btnReset;
+    private ImageButton btnTheme;
     private ImageButton btnPlayPause;
     private MaterialButton btnTimePreset;
     private ImageButton btnSound;
 
-    // Colors
+    // Dynamic Colors
+    private int colorClockBg;
+
     private int colorInactiveBg;
     private int colorInactiveStroke;
     private int colorTextInactivePrimary;
@@ -88,6 +104,17 @@ public class MainActivity extends AppCompatActivity {
     private int colorFlaggedStroke;
     private int colorTextFlaggedPrimary;
     private int colorTextFlaggedAccent;
+
+    private int colorControlBarBg;
+    private int colorControlBarStroke;
+    private int colorControlIcon;
+    private int colorControlIconAccent;
+    private int colorBadgeBg;
+    private int colorBadgeText;
+
+    private int colorPresetBtnBg;
+    private int colorPresetBtnStroke;
+    private int colorPresetBtnText;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -108,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             updateUI();
-            // Faster tick rate (30ms) for smooth tenths-of-a-second display in low time scrambles
             long delay = time[active] < 10000 ? 30 : 100;
             handler.postDelayed(this, delay);
         }
@@ -117,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        isLightMode = prefs.getBoolean(KEY_LIGHT_MODE, false);
+
         setContentView(R.layout.activity_main);
 
         // Keep screen awake during chess matches
@@ -124,29 +154,75 @@ public class MainActivity extends AppCompatActivity {
 
         loadColors();
         initViews();
+        applyThemeMode();
         initAudio();
         resetGame(selectedPresetIndex);
     }
 
     private void loadColors() {
-        colorInactiveBg = ContextCompat.getColor(this, R.color.card_inactive_bg);
-        colorInactiveStroke = ContextCompat.getColor(this, R.color.card_inactive_stroke);
-        colorTextInactivePrimary = ContextCompat.getColor(this, R.color.text_inactive_primary);
-        colorTextInactiveSecondary = ContextCompat.getColor(this, R.color.text_inactive_secondary);
+        if (isLightMode) {
+            colorClockBg = ContextCompat.getColor(this, R.color.clock_bg_light);
 
-        colorActiveBg = ContextCompat.getColor(this, R.color.card_active_bg);
-        colorActiveStroke = ContextCompat.getColor(this, R.color.card_active_stroke);
-        colorTextActivePrimary = ContextCompat.getColor(this, R.color.text_active_primary);
-        colorTextActiveAccent = ContextCompat.getColor(this, R.color.text_active_accent);
+            colorInactiveBg = ContextCompat.getColor(this, R.color.card_inactive_bg_light);
+            colorInactiveStroke = ContextCompat.getColor(this, R.color.card_inactive_stroke_light);
+            colorTextInactivePrimary = ContextCompat.getColor(this, R.color.text_inactive_primary_light);
+            colorTextInactiveSecondary = ContextCompat.getColor(this, R.color.text_inactive_secondary_light);
 
-        colorFlaggedBg = ContextCompat.getColor(this, R.color.card_flagged_bg);
-        colorFlaggedStroke = ContextCompat.getColor(this, R.color.card_flagged_stroke);
-        colorTextFlaggedPrimary = ContextCompat.getColor(this, R.color.text_flagged_primary);
-        colorTextFlaggedAccent = ContextCompat.getColor(this, R.color.text_flagged_accent);
+            colorActiveBg = ContextCompat.getColor(this, R.color.card_active_bg_light);
+            colorActiveStroke = ContextCompat.getColor(this, R.color.card_active_stroke_light);
+            colorTextActivePrimary = ContextCompat.getColor(this, R.color.text_active_primary_light);
+            colorTextActiveAccent = ContextCompat.getColor(this, R.color.text_active_accent_light);
+
+            colorFlaggedBg = ContextCompat.getColor(this, R.color.card_flagged_bg_light);
+            colorFlaggedStroke = ContextCompat.getColor(this, R.color.card_flagged_stroke_light);
+            colorTextFlaggedPrimary = ContextCompat.getColor(this, R.color.text_flagged_primary_light);
+            colorTextFlaggedAccent = ContextCompat.getColor(this, R.color.text_flagged_accent_light);
+
+            colorControlBarBg = ContextCompat.getColor(this, R.color.control_bar_bg_light);
+            colorControlBarStroke = ContextCompat.getColor(this, R.color.control_bar_stroke_light);
+            colorControlIcon = ContextCompat.getColor(this, R.color.control_icon_light);
+            colorControlIconAccent = ContextCompat.getColor(this, R.color.control_icon_accent_light);
+            colorBadgeBg = ContextCompat.getColor(this, R.color.badge_bg_light);
+            colorBadgeText = ContextCompat.getColor(this, R.color.badge_text_light);
+
+            colorPresetBtnBg = ContextCompat.getColor(this, R.color.preset_btn_bg_light);
+            colorPresetBtnStroke = ContextCompat.getColor(this, R.color.preset_btn_stroke_light);
+            colorPresetBtnText = ContextCompat.getColor(this, R.color.preset_btn_text_light);
+        } else {
+            colorClockBg = ContextCompat.getColor(this, R.color.clock_bg_dark);
+
+            colorInactiveBg = ContextCompat.getColor(this, R.color.card_inactive_bg_dark);
+            colorInactiveStroke = ContextCompat.getColor(this, R.color.card_inactive_stroke_dark);
+            colorTextInactivePrimary = ContextCompat.getColor(this, R.color.text_inactive_primary_dark);
+            colorTextInactiveSecondary = ContextCompat.getColor(this, R.color.text_inactive_secondary_dark);
+
+            colorActiveBg = ContextCompat.getColor(this, R.color.card_active_bg_dark);
+            colorActiveStroke = ContextCompat.getColor(this, R.color.card_active_stroke_dark);
+            colorTextActivePrimary = ContextCompat.getColor(this, R.color.text_active_primary_dark);
+            colorTextActiveAccent = ContextCompat.getColor(this, R.color.text_active_accent_dark);
+
+            colorFlaggedBg = ContextCompat.getColor(this, R.color.card_flagged_bg_dark);
+            colorFlaggedStroke = ContextCompat.getColor(this, R.color.card_flagged_stroke_dark);
+            colorTextFlaggedPrimary = ContextCompat.getColor(this, R.color.text_flagged_primary_dark);
+            colorTextFlaggedAccent = ContextCompat.getColor(this, R.color.text_flagged_accent_dark);
+
+            colorControlBarBg = ContextCompat.getColor(this, R.color.control_bar_bg_dark);
+            colorControlBarStroke = ContextCompat.getColor(this, R.color.control_bar_stroke_dark);
+            colorControlIcon = ContextCompat.getColor(this, R.color.control_icon_dark);
+            colorControlIconAccent = ContextCompat.getColor(this, R.color.control_icon_accent_dark);
+            colorBadgeBg = ContextCompat.getColor(this, R.color.badge_bg_dark);
+            colorBadgeText = ContextCompat.getColor(this, R.color.badge_text_dark);
+
+            colorPresetBtnBg = ContextCompat.getColor(this, R.color.preset_btn_bg_dark);
+            colorPresetBtnStroke = ContextCompat.getColor(this, R.color.preset_btn_stroke_dark);
+            colorPresetBtnText = ContextCompat.getColor(this, R.color.preset_btn_text_dark);
+        }
     }
 
     private void initViews() {
-        // Player 0 = Bottom (White), Player 1 = Top (Black)
+        rootLayout = findViewById(R.id.rootLayout);
+        centerControlBar = findViewById(R.id.centerControlBar);
+
         cards[0] = findViewById(R.id.cardBottom);
         cards[1] = findViewById(R.id.cardTop);
 
@@ -168,16 +244,85 @@ public class MainActivity extends AppCompatActivity {
         cards[0].setOnClickListener(v -> handleTap(0, v));
         cards[1].setOnClickListener(v -> handleTap(1, v));
 
+        btnReset = findViewById(R.id.btnReset);
+        btnTheme = findViewById(R.id.btnTheme);
         btnPlayPause = findViewById(R.id.btnPlayPause);
         btnTimePreset = findViewById(R.id.btnTimePreset);
         btnSound = findViewById(R.id.btnSound);
 
-        ImageButton btnReset = findViewById(R.id.btnReset);
-
         btnPlayPause.setOnClickListener(v -> togglePlayPause());
         btnReset.setOnClickListener(v -> confirmReset());
+        btnTheme.setOnClickListener(v -> toggleThemeMode());
         btnTimePreset.setOnClickListener(v -> showTimePresetDialog());
         btnSound.setOnClickListener(v -> toggleSound());
+    }
+
+    private void toggleThemeMode() {
+        isLightMode = !isLightMode;
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .edit()
+                .putBoolean(KEY_LIGHT_MODE, isLightMode)
+                .apply();
+
+        btnTheme.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+        loadColors();
+        applyThemeMode();
+        updateUI();
+    }
+
+    private void applyThemeMode() {
+        if (rootLayout != null) {
+            rootLayout.setBackgroundColor(colorClockBg);
+        }
+
+        getWindow().setStatusBarColor(colorClockBg);
+        getWindow().setNavigationBarColor(colorClockBg);
+
+        WindowInsetsControllerCompat insetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (insetsController != null) {
+            insetsController.setAppearanceLightStatusBars(isLightMode);
+            insetsController.setAppearanceLightNavigationBars(isLightMode);
+        }
+
+        if (centerControlBar != null) {
+            GradientDrawable barDrawable = new GradientDrawable();
+            barDrawable.setShape(GradientDrawable.RECTANGLE);
+            barDrawable.setCornerRadius(dpToPx(32));
+            barDrawable.setColor(colorControlBarBg);
+            barDrawable.setStroke(dpToPx(1.5f), colorControlBarStroke);
+            centerControlBar.setBackground(barDrawable);
+        }
+
+        if (btnReset != null) btnReset.setImageTintList(ColorStateList.valueOf(colorControlIcon));
+        if (btnTheme != null) {
+            btnTheme.setImageResource(isLightMode ? R.drawable.ic_dark_mode : R.drawable.ic_light_mode);
+            btnTheme.setImageTintList(ColorStateList.valueOf(colorControlIcon));
+        }
+        if (btnPlayPause != null) btnPlayPause.setImageTintList(ColorStateList.valueOf(colorControlIconAccent));
+        if (btnSound != null) btnSound.setImageTintList(ColorStateList.valueOf(colorControlIcon));
+
+        if (btnTimePreset != null) {
+            btnTimePreset.setBackgroundTintList(ColorStateList.valueOf(colorPresetBtnBg));
+            btnTimePreset.setStrokeColor(ColorStateList.valueOf(colorPresetBtnStroke));
+            btnTimePreset.setTextColor(colorPresetBtnText);
+            btnTimePreset.setIconTint(ColorStateList.valueOf(colorPresetBtnText));
+        }
+
+        for (int p = 0; p < 2; p++) {
+            if (tvMoves[p] != null) {
+                GradientDrawable badgeDrawable = new GradientDrawable();
+                badgeDrawable.setShape(GradientDrawable.RECTANGLE);
+                badgeDrawable.setCornerRadius(dpToPx(12));
+                badgeDrawable.setColor(colorBadgeBg);
+                badgeDrawable.setStroke(dpToPx(1), colorPresetBtnStroke);
+                tvMoves[p].setBackground(badgeDrawable);
+                tvMoves[p].setTextColor(colorBadgeText);
+            }
+        }
+    }
+
+    private int dpToPx(float dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
     private void initAudio() {
@@ -191,7 +336,6 @@ public class MainActivity extends AppCompatActivity {
     private void handleTap(int player, View view) {
         long now = SystemClock.elapsedRealtime();
 
-        // If game has not started yet
         if (active == -1 && moves[0] + moves[1] == 0) {
             moves[player]++;
             active = 1 - player;
@@ -204,15 +348,12 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // If game is paused, ignore card tap until resumed
         if (isPaused) {
             return;
         }
 
-        // Only the player whose turn it is can tap to switch
         if (active == player) {
             time[player] -= (now - lastTimestamp);
-            // Apply Fischer increment if configured
             int inc = presets[selectedPresetIndex].incrementSeconds;
             if (inc > 0) {
                 time[player] += (inc * 1000L);
@@ -226,17 +367,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void togglePlayPause() {
-        // Can't pause if game has not started or already finished
         if (active == -1 && !isPaused) return;
 
         if (isPaused) {
-            // Resume
             isPaused = false;
             lastTimestamp = SystemClock.elapsedRealtime();
             handler.removeCallbacks(tick);
             handler.post(tick);
         } else {
-            // Pause
             isPaused = true;
             handler.removeCallbacks(tick);
         }
@@ -319,7 +457,6 @@ public class MainActivity extends AppCompatActivity {
     private String formatTime(long ms) {
         if (ms <= 0) return "00:00";
 
-        // Under 10 seconds: show tenths of a second for high-stakes scramble
         if (ms < 10000) {
             long seconds = ms / 1000;
             long tenths = (ms % 1000) / 100;
@@ -333,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        // Play / Pause Icon
         btnPlayPause.setImageResource(isPaused ? R.drawable.ic_play : R.drawable.ic_pause);
 
         for (int p = 0; p < 2; p++) {
@@ -341,7 +477,6 @@ public class MainActivity extends AppCompatActivity {
             String unit = moves[p] == 1 ? getString(R.string.move_singular) : getString(R.string.move_plural);
             tvMoves[p].setText(getString(R.string.moves_format, moves[p], unit));
 
-            // Check if player timed out
             if (time[p] == 0 && (moves[0] + moves[1] > 0)) {
                 cards[p].setCardBackgroundColor(colorFlaggedBg);
                 cards[p].setStrokeColor(colorFlaggedStroke);
@@ -350,7 +485,6 @@ public class MainActivity extends AppCompatActivity {
                 tvStatuses[p].setTextColor(colorTextFlaggedAccent);
                 tvStatuses[p].setText(R.string.status_flagged);
             } else if (p == active && !isPaused) {
-                // Active player
                 cards[p].setCardBackgroundColor(colorActiveBg);
                 cards[p].setStrokeColor(colorActiveStroke);
                 tvTimes[p].setTextColor(colorTextActivePrimary);
@@ -358,7 +492,6 @@ public class MainActivity extends AppCompatActivity {
                 tvStatuses[p].setTextColor(colorTextActiveAccent);
                 tvStatuses[p].setText(R.string.status_active);
             } else {
-                // Waiting / Inactive player
                 cards[p].setCardBackgroundColor(colorInactiveBg);
                 cards[p].setStrokeColor(colorInactiveStroke);
                 tvTimes[p].setTextColor(colorTextInactivePrimary);
